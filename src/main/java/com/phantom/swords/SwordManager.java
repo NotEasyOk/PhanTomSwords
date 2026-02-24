@@ -245,6 +245,12 @@ public void onJoin(PlayerJoinEvent e) {
     actionCooldowns.put(e.getPlayer().getUniqueId(), dataManager.loadCooldowns(e.getPlayer().getUniqueId()));
 }
 
+    @EventHandler
+public void onInventoryClick(InventoryClickEvent e) {
+    if (e.getView().getTitle().startsWith("§0Recipe:")) {
+        e.setCancelled(true); // Player item nahi utha payega
+    }
+
 @EventHandler
 public void onQuit(PlayerQuitEvent e) {
     UUID uuid = e.getPlayer().getUniqueId();
