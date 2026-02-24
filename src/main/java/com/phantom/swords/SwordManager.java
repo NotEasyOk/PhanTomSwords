@@ -7,6 +7,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -250,7 +251,8 @@ public void onInventoryClick(InventoryClickEvent e) {
     if (e.getView().getTitle().startsWith("§0Recipe:")) {
         e.setCancelled(true); // Player item nahi utha payega
     }
-
+}
+    
 @EventHandler
 public void onQuit(PlayerQuitEvent e) {
     UUID uuid = e.getPlayer().getUniqueId();
