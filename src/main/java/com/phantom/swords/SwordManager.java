@@ -82,7 +82,7 @@ public class SwordManager implements Listener {
         switch (action) {
             case "RIGHT":
                 p.setVelocity(p.getLocation().getDirection().multiply(2.0).setY(0.2));
-                p.getWorld().spawnParticle(Particle.REDSTONE, p.getLocation(), 60, new Particle.DustOptions(Color.RED, 2));
+                p.getWorld().spawnParticle(Particle.DUST, p.getLocation(), 60, new Particle.DustOptions(Color.RED, 2));
                 damageNearby(p, 3.5, 7.0);
                 p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1f, 1.5f);
                 break;
@@ -98,7 +98,7 @@ public class SwordManager implements Listener {
                 break;
             case "ULT":
                 p.getWorld().spawnParticle(Particle.SQUID_INK, p.getLocation(), 300, 5, 2, 5);
-                p.getWorld().spawnParticle(Particle.SMOKE_NORMAL, p.getLocation(), 100, 5, 1, 5);
+                p.getWorld().spawnParticle(Particle.SMOKE, p.getLocation(), 100, 5, 1, 5);
                 p.sendTitle("§4§lDOMAIN SLASH", "§7Darkness Consumes...", 5, 30, 5);
                 p.getNearbyEntities(8, 8, 8).forEach(en -> {
                     if (en instanceof LivingEntity && en != p) {
@@ -115,9 +115,9 @@ public class SwordManager implements Listener {
         switch (action) {
             case "RIGHT":
                 Location loc = p.getTargetBlock(null, 10).getLocation().add(0, 1, 0);
-                p.getWorld().spawnParticle(Particle.SMOKE_LARGE, p.getLocation(), 40);
+                p.getWorld().spawnParticle(Particle.LARGE_SMOKE, p.getLocation(), 40);
                 p.teleport(loc.setDirection(p.getLocation().getDirection()));
-                p.getWorld().spawnParticle(Particle.SMOKE_LARGE, p.getLocation(), 40);
+                p.getWorld().spawnParticle(Particle.LARGE_SMOKE, p.getLocation(), 40);
                 p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
                 break;
             case "LEFT":
@@ -129,7 +129,7 @@ public class SwordManager implements Listener {
                 }
                 break;
             case "ULT":
-                p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 400, 1));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 400, 1));
                 p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 1));
                 p.getWorld().spawnParticle(Particle.DRAGON_BREATH, p.getLocation(), 150, 1, 2, 1);
                 p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.8f, 0.5f);
@@ -154,7 +154,7 @@ public class SwordManager implements Listener {
                 }
                 break;
             case "ULT":
-                p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, p.getLocation(), 15, 3, 3, 3);
+                p.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, p.getLocation(), 15, 3, 3, 3);
                 p.getWorld().spawnParticle(Particle.LAVA, p.getLocation(), 50, 4, 1, 4);
                 p.playSound(p.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.2f, 0.8f);
                 p.getNearbyEntities(7, 7, 7).forEach(en -> {
