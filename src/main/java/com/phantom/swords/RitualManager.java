@@ -41,7 +41,7 @@ public class RitualManager implements Listener {
             public void run() {
                 if (time <= 0) {
                     loc.getWorld().strikeLightning(loc);
-                    loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 5);
+                    loc.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, loc, 5);
                     loc.getWorld().dropItemNaturally(loc.clone().add(0, 1, 0), sword);
                     bar.removeAll();
                     as.remove();
