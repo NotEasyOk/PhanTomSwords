@@ -1,1 +1,72 @@
+swords:
+  PHANTOM_BLADE:
+    name: "&4&lPhanTom Blade"
+    material: "NETHERITE_SWORD"
+    custom_model_data: 1001
+    lore:
+      - "&7Type: &cCurse Power"
+      - "&f» &eL: &7Rapid Slash"
+      - "&f» &eR: &7Curse Dash"
+      - "&f» &eS: &7Domain Slash"
+    cooldowns:
+      left: 10
+      right: 15
+      shift: 60
+    recipe_slots:
+      - "NETHER_STAR"
+      - "CRYING_OBSIDIAN"
+      - "NETHER_STAR"
+      - "DRAGON_BREATH"
+      - "NETHERITE_SWORD"
+      - "DRAGON_BREATH"
+      - "NETHER_STAR"
+      - "NETHERITE_INGOT"
+      - "NETHER_STAR"
 
+  SHADOW_BLADE:
+    name: "&8&lShadow Blade"
+    material: "NETHERITE_SWORD"
+    custom_model_data: 1002
+    lore:
+      - "&7Type: &8Soul Power"
+      - "&f» &eL: &7Soul Slash"
+      - "&f» &eR: &7Shadow Step"
+      - "&f» &eS: &7Hollow Mode"
+    cooldowns:
+      left: 8
+      right: 12
+      shift: 45
+    recipe_slots:
+      - "SOUL_SAND"
+      - "SOUL_SAND"
+      - "SOUL_SAND"
+      - "GHAST_TEAR"
+      - "NETHERITE_SWORD"
+      - "GHAST_TEAR"
+      - "DIAMOND"
+      - "NETHERITE_INGOT"
+      - "DIAMOND"
+
+  FIRE_LIGHTER:
+    name: "&6&lFire Lighter"
+    material: "NETHERITE_SWORD"
+    custom_model_data: 1003
+    lore:
+      - "&7Type: &6Elemental"
+      - "&f» &eL: &7Thunder Strike"
+      - "&f» &eR: &7Fire Dash"
+      - "&f» &eS: &7Flame Burst"
+    cooldowns:
+      left: 5
+      right: 10
+      shift: 30
+    recipe_slots:
+      - "BLAZE_ROD"
+      - "MAGMA_BLOCK"
+      - "BLAZE_ROD"
+      - "FIRE_CHARGE"
+      - "NETHERITE_SWORD"
+      - "FIRE_CHARGE"
+      - "LAVA_BUCKET"
+      - "NETHERITE_INGOT"
+      - "LAVA_BUCKET"
