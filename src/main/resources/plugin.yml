@@ -1,1 +1,17 @@
+name: PhanTomSwords
+version: 1.0
+main: com.phantom.swords.PhanTomCore
+api-version: 1.21
+author: NotEasyOk
+description: Legendary swords with custom rituals.
 
+commands:
+  phantomswords:
+    description: Administration command.
+    aliases: [ps]
+    permission: phantomswords.admin
+
+permissions:
+  phantomswords.admin:
+    description: Access to admin commands.
+    default: op
