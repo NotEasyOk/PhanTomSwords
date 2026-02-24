@@ -23,6 +23,7 @@ import java.util.UUID;
 public class SwordManager implements Listener {
 
     private final HashMap<UUID, HashMap<String, Long>> actionCooldowns = new HashMap<>();
+    private final PlayerDataManager dataManager = new PlayerDataManager();
 
     public SwordManager() {
         new BukkitRunnable() {
@@ -237,6 +238,22 @@ public class SwordManager implements Listener {
 
         if (action != null && checkCD(p, action)) handleChoice(p, type, action);
     }
+
+    @EventHandler
+public void onJoin(PlayerJoinEvent e) {
+    // Player aate hi uska purana cooldown load karo
+    actionCooldowns.put(e.getPlayer().getUniqueId(), dataManager.loadCooldowns(e.getPlayer().getUniqueId()));
+}
+
+@EventHandler
+public void onQuit(PlayerQuitEvent e) {
+    UUID uuid = e.getPlayer().getUniqueId();
+    if (actionCooldowns.containsKey(uuid)) {
+        // Player jaate hi uska data file mein save kar do
+        dataManager.saveCooldowns(uuid, actionCooldowns.get(uuid));
+        actionCooldowns.remove(uuid); 
+    }
+}
 
     private boolean checkCD(Player p, String action) {
         String type = getSwordType(p.getInventory().getItemInMainHand());
