@@ -24,6 +24,7 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
     // --- 1. EPIC DEATH ANIMATION & HEART STEAL ---
     @EventHandler
     public void onKill(PlayerDeathEvent e) {
+        if (!plugin.getConfig().getBoolean("life-system.enabled", true)) return;
         Player victim = e.getEntity();
         Player killer = victim.getKiller();
 
@@ -77,6 +78,7 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
     // --- 2. HEART CONSUME SYSTEM (Right Click to Use) ---
     @EventHandler
     public void onHeartUse(PlayerInteractEvent e) {
+        if (!plugin.getConfig().getBoolean("life-system.enabled", true)) return;
         Player p = e.getPlayer();
         ItemStack item = p.getInventory().getItemInMainHand();
 
@@ -150,9 +152,10 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        // (Pichle commands: withdraw, revive, sethearts ka logic)
-        return true; 
-    }
+        if (!plugin.getConfig().getBoolean("life-system.enabled", true)) {
+            sender.sendMessage("§c[PhanTom] Life System is currently disabled in config!");
+            return true;
+        }
     
     public static ItemStack getHeartItem() {
         ItemStack item = new ItemStack(Material.FERMENTED_SPIDER_EYE);
