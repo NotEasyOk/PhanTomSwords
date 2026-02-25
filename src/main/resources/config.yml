@@ -4,6 +4,7 @@
 
 swords:
   PHANTOM_BLADE:
+    display-name: "&5&lPHANTOM BLADE"
     ritual_time_minutes: 15
     cooldowns:
       left: 10
@@ -21,6 +22,7 @@ swords:
       - "NETHER_STAR"
 
   SHADOW_BLADE:
+    display-name: "&8&lSHADOW BLADE"
     ritual_time_minutes: 10
     cooldowns:
       left: 8
@@ -38,6 +40,7 @@ swords:
       - "DIAMOND"
 
   FIRE_LIGHTER:
+    display-name: "&6&lFIRE LIGHTER"
     ritual_time_minutes: 5
     cooldowns:
       left: 5
