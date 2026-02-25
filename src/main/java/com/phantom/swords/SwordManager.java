@@ -241,7 +241,7 @@ public class SwordManager implements Listener {
             case "ULT":
                 p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 400, 3));
                 p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 4));
-                p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 1);
+                p.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, loc, 1);
                 p.playSound(loc, Sound.ENTITY_WITHER_SPAWN, 1f, 1f);
                 new BukkitRunnable() {
                     int t = 0;
