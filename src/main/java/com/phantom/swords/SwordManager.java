@@ -417,4 +417,24 @@ public class SwordManager implements Listener {
             }
         });
     }
-                                           }
+
+// --- PASSIVE ABILITIES ---
+    private void applyPassiveEffects(Player p, String id) {
+        switch (id) {
+            case "PHANTOM_BLADE":
+                p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 60, 0, false, false));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 60, 0, false, false));
+                break;
+                
+            case "SHADOW_BLADE":
+                p.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 60, 7, false, false));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 60, 1, false, false)); 
+                break;
+                
+            case "FIRE_LIGHTER":
+                p.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 60, 0, false, false));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 60, 1, false, false)); 
+                break;
+        }
+     }
+}
