@@ -15,7 +15,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,194 +36,295 @@ public class SwordManager implements Listener {
                     ItemStack item = p.getInventory().getItemInMainHand();
                     String type = getSwordType(item);
                     if (type != null) {
-                        applyGodAttributes(item, type); // Unbreakable aur Lore yahan apply hoga
-                        sendFancyActionBar(p);
+                        applyGodAttributes(item, type);
+                        sendFancyActionBar(p, type);
                     }
                 }
             }
-        }.runTaskTimer(PhanTomCore.get(), 0, 10);
+        }.runTaskTimer(PhanTomCore.get(), 0, 5); // Fast update for smooth UI
     }
 
-    // --- NEW: Attributes & Unique Lore for ALL Swords ---
+    // --- 1. HARDCODED MATERIAL, LORE & CUSTOM MODEL DATA ---
     private void applyGodAttributes(ItemStack item, String type) {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
-        boolean changed = false;
-
-        // Make Unbreakable and Lava Proof
-        if (!meta.isUnbreakable()) {
-            meta.setUnbreakable(true);
-            meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            changed = true;
-        }
-        if (!meta.isFireResistant()) {
-            meta.setFireResistant(true);
-            changed = true;
+        // Force Material to Netherite Sword
+        if (item.getType() != Material.NETHERITE_SWORD) {
+            item.setType(Material.NETHERITE_SWORD);
         }
 
-        // Set Unique Lore for each Sword
+        meta.setUnbreakable(true);
+        meta.setFireResistant(true);
+        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
+
         List<String> lore = new ArrayList<>();
-        lore.add("§8§m--------------------------");
+        lore.add("§8§m----------------------------------");
         
-        if (type.equals("PHANTOM_BLADE")) {
-            lore.add("§7Type: §5§lCURSE ENERGY");
+        } else if (type.equals("PHANTOM_BLADE")) {
+            meta.setCustomModelData(1);
+            lore.add("§7Weapon Class: §5§lMYTHIC CURSE");
+            lore.add("§8Forged in the depths of the void.");
             lore.add("");
-            lore.add("§d§lSKILLS:");
-            lore.add(" §f» §fLeft: §bRapid Slash");
-            lore.add(" §f» §fRight: §dCurse Dash");
-            lore.add(" §f» §fShift+R: §4§lDOMAIN SLASH");
+            lore.add("§d§l✦ ABILITIES ✦");
+            lore.add(" §f[L] §bVoid Cleave §7- Sweeping dark slashes.");
+            lore.add(" §f[R] §dPhantom Dash §7- Burst forward with curse energy.");
+            lore.add(" §f[Shift+R] §4§lDOMAIN EXPANSION §7- Slices reality itself.");
         } else if (type.equals("SHADOW_BLADE")) {
-            lore.add("§7Type: §8§lSHADOW STEALTH");
+            meta.setCustomModelData(2);
+            lore.add("§7Weapon Class: §8§lABYSSAL STEALTH");
+            lore.add("§8A blade that casts no shadow.");
             lore.add("");
-            lore.add("§d§lSKILLS:");
-            lore.add(" §f» §fLeft: §bSoul Pierce");
-            lore.add(" §f» §fRight: §8Shadow Step");
-            lore.add(" §f» §fShift+R: §5§lHOLLOW MODE");
+            lore.add("§d§l✦ ABILITIES ✦");
+            lore.add(" §f[L] §bSoul Pierce §7- A piercing beam of soul fire.");
+            lore.add(" §f[R] §8Assassin's Step §7- Blink behind your target.");
+            lore.add(" §f[Shift+R] §5§lHOLLOW AWAKENING §7- Become a god of death.");
         } else if (type.equals("FIRE_LIGHTER")) {
-            lore.add("§7Type: §6§lSOLAR FLARE");
+            meta.setCustomModelData(3);
+            lore.add("§7Weapon Class: §6§lSOLAR FLARE");
+            lore.add("§8Burns with the heat of a dying star.");
             lore.add("");
-            lore.add("§d§lSKILLS:");
-            lore.add(" §f» §fLeft: §eSolar Strike");
-            lore.add(" §f» §fRight: §6Phoenix Dash");
-            lore.add(" §f» §fShift+R: §c§lSUPERNOVA");
+            lore.add("§d§l✦ ABILITIES ✦");
+            lore.add(" §f[L] §eOrbital Strike §7- Call down a solar laser.");
+            lore.add(" §f[R] §6Phoenix Flight §7- Leave a trail of hellfire.");
+            lore.add(" §f[Shift+R] §c§lSUPERNOVA §7- Erupt and obliterate.");
         }
 
         lore.add("");
-        lore.add("§6§lGODLY ATTRIBUTES:");
-        lore.add(" §f» §bUnbreakable Bond");
-        lore.add(" §f» §6Lava Immunity");
-        lore.add("");
-        lore.add("§e§lLEGENDARY ARTIFACT §b§l✔");
-        lore.add("§8§m--------------------------");
+        lore.add("§e§l⚝ GODLY ARTIFACT ⚝");
+        lore.add("§8§m----------------------------------");
 
-        // Lore sirf tab set karein jab pehle se na ho ya badal gaya ho
-        if (!lore.equals(meta.getLore())) {
-            meta.setLore(lore);
-            changed = true;
-        }
-
-        if (changed) item.setItemMeta(meta);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
     }
 
-    private void sendFancyActionBar(Player p) {
-        String bar = "§fL " + getIcon(p, "LEFT") + " §fR " + getIcon(p, "RIGHT") + " §fShift+R " + getIcon(p, "ULT");
+    // --- 2. ADVANCED PROGRESS BAR UI ---
+    private void sendFancyActionBar(Player p, String type) {
+        String lBar = getProgressBar(p, type, "LEFT");
+        String rBar = getProgressBar(p, type, "RIGHT");
+        String sBar = getProgressBar(p, type, "ULT");
+        
+        String bar = "§fL [" + lBar + "§f]  §fR [" + rBar + "§f]  §fS [" + sBar + "§f]";
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(bar));
     }
 
-    // --- 1. PHANTOM BLADE ---
+    private String getProgressBar(Player p, String type, String action) {
+        long last = actionCooldowns.getOrDefault(p.getUniqueId(), new HashMap<>()).getOrDefault(action, 0L);
+        String path = "swords." + type + ".cooldowns." + (action.equals("ULT") ? "shift" : action.toLowerCase());
+        int maxCD = PhanTomCore.get().getConfig().getInt(path, 10);
+        
+        long passedMillis = System.currentTimeMillis() - last;
+        double progress = Math.min(1.0, (double) passedMillis / (maxCD * 1000L));
+        
+        int totalBars = 8;
+        int activeBars = (int) (progress * totalBars);
+        
+        StringBuilder bar = new StringBuilder();
+        if (progress >= 1.0) {
+            bar.append("§a"); // Green if ready
+            for (int i=0; i<totalBars; i++) bar.append("|");
+        } else {
+            bar.append("§c"); // Red for cooling down
+            for (int i=0; i<activeBars; i++) bar.append("|");
+            bar.append("§7"); // Grey for remaining
+            for (int i=activeBars; i<totalBars; i++) bar.append("|");
+        }
+        return bar.toString();
+    }
+
+    // --- 3. GOD LEVEL SKILLS ---
+
     private void executePhanTomBlade(Player p, String action) {
         Location loc = p.getLocation();
         switch (action) {
-            case "RIGHT":
-                p.setVelocity(loc.getDirection().multiply(2.5).setY(0.1));
-                p.getWorld().spawnParticle(Particle.TRIAL_SPAWNER_DETECTION_OMINOUS, loc, 50, 0.5, 0.5, 0.5, 0.1);
-                p.getWorld().spawnParticle(Particle.DUST, loc, 40, new Particle.DustOptions(Color.fromRGB(75, 0, 130), 1.5f));
-                damageNearby(p, 4.0, 8.0);
+            case "RIGHT": // Phantom Dash
+                p.setVelocity(loc.getDirection().multiply(3.0).setY(0.2));
                 p.playSound(loc, Sound.ENTITY_ENDER_DRAGON_FLAP, 1f, 1.2f);
-                break;
-            case "LEFT":
-                for (int i = 0; i < 3; i++) {
-                    Bukkit.getScheduler().runTaskLater(PhanTomCore.get(), () -> {
-                        p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, p.getEyeLocation().add(p.getLocation().getDirection().multiply(2)), 5, 1, 1, 1, 0.1);
-                        p.getWorld().spawnParticle(Particle.SOUL, p.getLocation(), 20, 2, 1, 2, 0.05);
-                        damageNearby(p, 5.0, 6.0);
-                        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1f, 1.5f);
-                    }, i * 3L);
-                }
-                break;
-            case "ULT":
-                p.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 500, 6, 2, 6, 0.01);
-                p.getWorld().spawnParticle(Particle.REVERSE_PORTAL, loc, 200, 3, 3, 3, 0.1);
-                p.sendTitle("§4§lDOMAIN SLASH", "§7Everything Withers...", 5, 40, 5);
-                p.getNearbyEntities(10, 10, 10).forEach(en -> {
-                    if (en instanceof LivingEntity && en != p) {
-                        ((LivingEntity) en).damage(20.0, p);
-                        en.setVelocity(new Vector(0, 1.5, 0));
+                new BukkitRunnable() {
+                    int ticks = 0;
+                    public void run() {
+                        if (ticks++ > 15) cancel();
+                        p.getWorld().spawnParticle(Particle.WITCH, p.getLocation(), 15, 0.5, 0.5, 0.5, 0.1);
+                        p.getWorld().spawnParticle(Particle.SQUID_INK, p.getLocation(), 10, 0.5, 0.5, 0.5, 0.05);
                     }
-                });
-                p.playSound(loc, Sound.BLOCK_END_PORTAL_SPAWN, 1f, 0.5f);
+                }.runTaskTimer(PhanTomCore.get(), 0, 1);
+                damageNearby(p, 4.0, 10.0);
+                break;
+                
+            case "LEFT": // Void Cleave
+                Vector dir = loc.getDirection().normalize();
+                new BukkitRunnable() {
+                    double dist = 0;
+                    public void run() {
+                        if (dist > 8) cancel();
+                        Location point = p.getEyeLocation().add(dir.clone().multiply(dist));
+                        p.getWorld().spawnParticle(Particle.SWEEP_ATTACK, point, 3, 0.5, 0.5, 0.5, 0.1);
+                        p.getWorld().spawnParticle(Particle.PORTAL, point, 20, 0.5, 0.5, 0.5, 0.5);
+                        p.getWorld().playSound(point, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.5f, 0.5f);
+                        damageNearbyLoc(p, point, 2.5, 8.0);
+                        dist += 1.5;
+                    }
+                }.runTaskTimer(PhanTomCore.get(), 0, 1);
+                break;
+                
+            case "ULT": // DOMAIN SLASH (Area of Effect Sphere)
+                p.sendTitle("§4§lDOMAIN EXPANSION", "§7Malevolent Shrine", 5, 40, 5);
+                p.playSound(loc, Sound.BLOCK_END_PORTAL_SPAWN, 2f, 0.5f);
+                
+                new BukkitRunnable() {
+                    int ticks = 0;
+                    public void run() {
+                        if (ticks++ > 40) cancel();
+                        Location center = p.getLocation().add(0, 1, 0);
+                        
+                        // Create Sphere Boundary
+                        for (int i = 0; i < 50; i++) {
+                            double u = Math.random() * 2 * Math.PI;
+                            double v = Math.random() * Math.PI;
+                            double x = 8 * Math.sin(v) * Math.cos(u);
+                            double y = 8 * Math.sin(v) * Math.sin(u);
+                            double z = 8 * Math.cos(v);
+                            center.getWorld().spawnParticle(Particle.DRAGON_BREATH, center.clone().add(x, y, z), 1, 0, 0, 0, 0);
+                        }
+                        
+                        // Internal Slashes
+                        center.getWorld().spawnParticle(Particle.SWEEP_ATTACK, center.clone().add(Math.random()*6-3, Math.random()*6-3, Math.random()*6-3), 5, 1, 1, 1, 0);
+                        center.getWorld().playSound(center, Sound.ENTITY_PLAYER_ATTACK_CRIT, 1f, 1.5f);
+                        
+                        // Continuous Damage inside Domain (No block breaking)
+                        p.getNearbyEntities(8, 8, 8).forEach(en -> {
+                            if (en instanceof LivingEntity && en != p) {
+                                ((LivingEntity) en).damage(5.0, p); // Hits multiple times
+                                ((LivingEntity) en).setNoDamageTicks(0);
+                            }
+                        });
+                    }
+                }.runTaskTimer(PhanTomCore.get(), 0, 2);
                 break;
         }
     }
 
-    // --- 2. SHADOW BLADE ---
     private void executeShadowBlade(Player p, String action) {
         Location loc = p.getLocation();
         switch (action) {
-            case "RIGHT":
-                Entity target = getAimTarget(p, 15);
-                Location tpLoc = (target != null) ? target.getLocation().subtract(target.getLocation().getDirection().multiply(1)) : p.getTargetBlock(null, 12).getLocation();
-                p.getWorld().spawnParticle(Particle.LARGE_SMOKE, loc, 60, 0.5, 1, 0.5, 0.05);
-                p.teleport(tpLoc.setDirection(loc.getDirection()));
-                p.getWorld().spawnParticle(Particle.DRAGON_BREATH, tpLoc, 60, 0.5, 1, 0.5, 0.02);
-                p.playSound(tpLoc, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
+            case "RIGHT": // Exact Target Teleport
+                Entity target = getAimTarget(p, 25);
+                if (target != null) {
+                    Location targetLoc = target.getLocation();
+                    Vector inverseDir = targetLoc.getDirection().multiply(-1.5); // Go behind them
+                    Location tpLoc = targetLoc.clone().add(inverseDir);
+                    tpLoc.setDirection(targetLoc.getDirection()); // Face same way as target
+                    
+                    p.getWorld().spawnParticle(Particle.LARGE_SMOKE, p.getLocation(), 50, 0.5, 1, 0.5, 0.05);
+                    p.teleport(tpLoc);
+                    p.getWorld().spawnParticle(Particle.REVERSE_PORTAL, p.getLocation(), 100, 0.5, 1, 0.5, 0.1);
+                    p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 0.5f);
+                    ((LivingEntity) target).damage(10.0, p); // Backstab damage
+                } else {
+                    p.sendMessage("§cNo target in sight!");
+                    // Refund cooldown if missed
+                    actionCooldowns.get(p.getUniqueId()).put("RIGHT", 0L); 
+                }
                 break;
+                
             case "LEFT":
                 Vector dir = loc.getDirection();
-                for (double d = 0; d < 10; d += 0.5) {
+                for (double d = 0; d < 15; d += 0.5) {
                     Location beam = p.getEyeLocation().add(dir.clone().multiply(d));
-                    p.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, beam, 3, 0, 0, 0, 0.02);
+                    p.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, beam, 5, 0.1, 0.1, 0.1, 0.02);
                 }
-                damageNearby(p, 10.0, 9.0);
+                p.playSound(loc, Sound.ENTITY_WITHER_SHOOT, 0.5f, 1.5f);
+                damageNearbyLoc(p, getAimTargetLoc(p, 15), 3.0, 12.0);
                 break;
+                
             case "ULT":
-                p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 600, 2));
-                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 600, 3));
-                p.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 600, 1));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 400, 3));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 4));
+                p.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 1);
+                p.playSound(loc, Sound.ENTITY_WITHER_SPAWN, 1f, 1f);
                 new BukkitRunnable() {
                     int t = 0;
                     public void run() {
-                        if (t++ > 20) cancel();
-                        p.getWorld().spawnParticle(Particle.WITCH, p.getLocation().add(0, 1, 0), 20, 1, 1, 1, 0.1);
+                        if (t++ > 40) cancel();
+                        p.getWorld().spawnParticle(Particle.SCULK_SOUL, p.getLocation().add(0, 1, 0), 10, 0.5, 1, 0.5, 0.1);
                     }
                 }.runTaskTimer(PhanTomCore.get(), 0, 5);
-                p.playSound(loc, Sound.ENTITY_WITHER_DEATH, 1f, 1f);
                 break;
         }
     }
 
-    // --- 3. FIRE LIGHTER ---
     private void executeFireLighter(Player p, String action) {
         Location loc = p.getLocation();
         switch (action) {
-            case "RIGHT":
-                p.setVelocity(loc.getDirection().multiply(2.2).setY(0.4));
-                p.getWorld().spawnParticle(Particle.FLAME, loc, 100, 1, 1, 1, 0.1);
-                p.getWorld().spawnParticle(Particle.LAVA, loc, 20, 1, 1, 1, 0.5);
-                p.playSound(loc, Sound.ITEM_FIRECHARGE_USE, 1f, 0.8f);
-                break;
-            case "LEFT":
-                Entity t = getAimTarget(p, 15);
-                if (t != null) {
-                    Location tLoc = t.getLocation();
-                    tLoc.getWorld().spawnParticle(Particle.EXPLOSION, tLoc, 10);
-                    tLoc.getWorld().spawnParticle(Particle.FLAME, tLoc, 50, 0.5, 2, 0.5, 0.1);
-                    ((LivingEntity) t).damage(14.0, p);
-                    t.setFireTicks(100);
-                    p.playSound(loc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 0.5f, 2f);
-                }
-                break;
-            case "ULT":
-                for (int i = 0; i < 360; i += 10) {
-                    double angle = Math.toRadians(i);
-                    double x = Math.cos(angle) * 6;
-                    double z = Math.sin(angle) * 6;
-                    p.getWorld().spawnParticle(Particle.FLAME, loc.clone().add(x, 0.5, z), 10, 0, 0, 0, 0.1);
-                }
-                p.getWorld().spawnParticle(Particle.EXPLOSION_EMITTER, loc, 5);
-                p.getNearbyEntities(8, 8, 8).forEach(en -> {
-                    if (en instanceof LivingEntity && en != p) {
-                        ((LivingEntity) en).damage(18.0, p);
-                        en.setFireTicks(200);
-                        en.setVelocity(en.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(2));
+            case "RIGHT": // Phoenix Flight
+                p.setVelocity(loc.getDirection().multiply(2.5).setY(0.6));
+                p.playSound(loc, Sound.ITEM_FIRECHARGE_USE, 1f, 0.5f);
+                new BukkitRunnable() {
+                    int ticks = 0;
+                    public void run() {
+                        if (ticks++ > 20) cancel();
+                        Location path = p.getLocation();
+                        p.getWorld().spawnParticle(Particle.FLAME, path, 20, 0.5, 0.5, 0.5, 0.05);
+                        p.getWorld().spawnParticle(Particle.LAVA, path, 5, 0.5, 0.5, 0.5, 0.1);
+                        damageNearby(p, 3.0, 8.0);
                     }
-                });
-                p.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1.5f, 0.5f);
+                }.runTaskTimer(PhanTomCore.get(), 0, 1);
+                break;
+                
+            case "LEFT": // Orbital Laser
+                Entity t = getAimTarget(p, 30);
+                if (t != null) {
+                    Location targetLoc = t.getLocation();
+                    p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 2f, 2f);
+                    
+                    new BukkitRunnable() {
+                        int ticks = 0;
+                        public void run() {
+                            if (ticks++ > 20 || t.isDead()) cancel();
+                            
+                            // Yellow Laser Beam from Sky
+                            for(double y = 0; y < 15; y+=0.5) {
+                                targetLoc.getWorld().spawnParticle(Particle.DUST, targetLoc.clone().add(0, y, 0), 10, new Particle.DustOptions(Color.YELLOW, 2.0f));
+                                targetLoc.getWorld().spawnParticle(Particle.FLAME, targetLoc.clone().add(0, y, 0), 2, 0.2, 0.2, 0.2, 0.01);
+                            }
+                            
+                            targetLoc.getWorld().playSound(targetLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 0.2f, 2f);
+                            ((LivingEntity) t).damage(4.0, p); // Continuous damage
+                            t.setFireTicks(100);
+                        }
+                    }.runTaskTimer(PhanTomCore.get(), 0, 2);
+                }
+                break;
+                
+            case "ULT": // Supernova (No block break)
+                p.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2f, 0.5f);
+                new BukkitRunnable() {
+                    double radius = 1;
+                    public void run() {
+                        if (radius > 12) cancel();
+                        for (int i = 0; i < 360; i += 10) {
+                            double angle = Math.toRadians(i);
+                            double x = Math.cos(angle) * radius;
+                            double z = Math.sin(angle) * radius;
+                            Location ring = loc.clone().add(x, 0.5, z);
+                            p.getWorld().spawnParticle(Particle.FLAME, ring, 5, 0, 0, 0, 0.05);
+                            p.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, ring, 2, 0, 0, 0, 0.02);
+                        }
+                        p.getNearbyEntities(radius, 3, radius).forEach(en -> {
+                            if (en instanceof LivingEntity && en != p) {
+                                ((LivingEntity) en).damage(25.0, p);
+                                en.setFireTicks(300);
+                                en.setVelocity(en.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(1.5).setY(0.5));
+                            }
+                        });
+                        radius += 1.5;
+                    }
+                }.runTaskTimer(PhanTomCore.get(), 0, 1);
                 break;
         }
     }
+
+    // --- EVENTS & UTILS ---
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
@@ -237,51 +340,42 @@ public class SwordManager implements Listener {
             action = "LEFT";
         }
 
-        if (action != null && checkCD(p, action)) handleChoice(p, type, action);
+        if (action != null && checkCD(p, type, action)) handleChoice(p, type, action);
     }
 
     @EventHandler
-public void onJoin(PlayerJoinEvent e) {
-    // Player aate hi uska purana cooldown load karo
-    actionCooldowns.put(e.getPlayer().getUniqueId(), dataManager.loadCooldowns(e.getPlayer().getUniqueId()));
-}
+    public void onJoin(PlayerJoinEvent e) {
+        actionCooldowns.put(e.getPlayer().getUniqueId(), dataManager.loadCooldowns(e.getPlayer().getUniqueId()));
+    }
 
     @EventHandler
-public void onInventoryClick(InventoryClickEvent e) {
-    if (e.getView().getTitle().startsWith("§0Recipe:")) {
-        e.setCancelled(true); // Player item nahi utha payega
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (e.getView().getTitle().startsWith("§0Recipe:")) {
+            e.setCancelled(true);
+        }
     }
-}
     
-@EventHandler
-public void onQuit(PlayerQuitEvent e) {
-    UUID uuid = e.getPlayer().getUniqueId();
-    if (actionCooldowns.containsKey(uuid)) {
-        // Player jaate hi uska data file mein save kar do
-        dataManager.saveCooldowns(uuid, actionCooldowns.get(uuid));
-        actionCooldowns.remove(uuid); 
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        if (actionCooldowns.containsKey(uuid)) {
+            dataManager.saveCooldowns(uuid, actionCooldowns.get(uuid));
+            actionCooldowns.remove(uuid); 
+        }
     }
-}
 
-    private boolean checkCD(Player p, String action) {
-        String type = getSwordType(p.getInventory().getItemInMainHand());
+    private boolean checkCD(Player p, String type, String action) {
         HashMap<String, Long> pCds = actionCooldowns.computeIfAbsent(p.getUniqueId(), k -> new HashMap<>());
         long last = pCds.getOrDefault(action, 0L);
         String path = "swords." + type + ".cooldowns." + (action.equals("ULT") ? "shift" : action.toLowerCase());
         int maxCD = PhanTomCore.get().getConfig().getInt(path, 10);
-        if (System.currentTimeMillis() - last < maxCD * 1000L) return false;
+        
+        if (System.currentTimeMillis() - last < maxCD * 1000L) {
+            return false; // Still on cooldown
+        }
+        
         pCds.put(action, System.currentTimeMillis());
         return true;
-    }
-
-    private String getIcon(Player p, String action) {
-        String type = getSwordType(p.getInventory().getItemInMainHand());
-        long last = actionCooldowns.getOrDefault(p.getUniqueId(), new HashMap<>()).getOrDefault(action, 0L);
-        String path = "swords." + type + ".cooldowns." + (action.equals("ULT") ? "shift" : action.toLowerCase());
-        int maxCD = PhanTomCore.get().getConfig().getInt(path, 10);
-        long diff = (System.currentTimeMillis() - last) / 1000;
-        if (diff >= maxCD) return "§a§l✔";
-        return "§c" + (maxCD - diff) + "s";
     }
 
     private void handleChoice(Player p, String type, String action) {
@@ -295,11 +389,32 @@ public void onQuit(PlayerQuitEvent e) {
         return item.getItemMeta().getPersistentDataContainer().get(PhanTomCore.SWORD_KEY, PersistentDataType.STRING);
     }
 
-    private Entity getAimTarget(Player p, int range) {
-        return p.getNearbyEntities(range, range, range).stream().filter(e -> e instanceof LivingEntity && e != p).findFirst().orElse(null);
+    // ADVANCED RAYTRACE AIMING
+    private Entity getAimTarget(Player p, double range) {
+        RayTraceResult result = p.getWorld().rayTraceEntities(p.getEyeLocation(), p.getLocation().getDirection(), range, 0.5, e -> e instanceof LivingEntity && e != p);
+        return result != null ? result.getHitEntity() : null;
+    }
+    
+    private Location getAimTargetLoc(Player p, double range) {
+        RayTraceResult result = p.getWorld().rayTraceBlocks(p.getEyeLocation(), p.getLocation().getDirection(), range, FluidCollisionMode.NEVER, true);
+        return result != null && result.getHitPosition() != null ? new Location(p.getWorld(), result.getHitPosition().getX(), result.getHitPosition().getY(), result.getHitPosition().getZ()) : p.getEyeLocation().add(p.getLocation().getDirection().multiply(range));
     }
 
     private void damageNearby(Player p, double r, double d) {
-        p.getNearbyEntities(r, r, r).forEach(e -> { if (e instanceof LivingEntity && e != p) ((LivingEntity) e).damage(d, p); });
+        p.getNearbyEntities(r, r, r).forEach(e -> { 
+            if (e instanceof LivingEntity && e != p) {
+                ((LivingEntity) e).damage(d, p); 
+                ((LivingEntity) e).setNoDamageTicks(0);
+            }
+        });
     }
+    
+    private void damageNearbyLoc(Player p, Location loc, double r, double d) {
+        loc.getWorld().getNearbyEntities(loc, r, r, r).forEach(e -> {
+            if (e instanceof LivingEntity && e != p) {
+                ((LivingEntity) e).damage(d, p);
+                ((LivingEntity) e).setNoDamageTicks(0);
+            }
+        });
     }
+                                           }
