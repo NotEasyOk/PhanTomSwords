@@ -163,4 +163,30 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
         item.setItemMeta(meta);
         return item;
     }
-          }
+
+    // LifeManager.java ke end mein ise dalo
+public static ItemStack getRevivalBook() {
+    ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
+    ItemMeta meta = item.getItemMeta();
+    if (meta != null) {
+        meta.setDisplayName("§d§lREVIVAL BOOK");
+        List<String> lore = new ArrayList<>();
+        lore.add("§8§m-------------------------");
+        lore.add("§7A forbidden artifact that can");
+        lore.add("§7pull a soul back from the void.");
+        lore.add("");
+        lore.add("§cUsage:");
+        lore.add("§fHold in hand and type:");
+        lore.add("§d/revive <player>");
+        lore.add("§8§m-------------------------");
+        meta.setLore(lore);
+        
+        // --- CUSTOM MODEL DATA (CMD) ---
+        // Ye ID aapke texture pack se connect hogi
+        meta.setCustomModelData(100); 
+        
+        item.setItemMeta(meta);
+    }
+    return item;
+   }
+ }
