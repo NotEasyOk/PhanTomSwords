@@ -38,13 +38,21 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
         Location loc = victim.getLocation();
         loc.getWorld().playSound(loc, Sound.ENTITY_GHAST_SCREAM, 1.5f, 0.5f);
         loc.getWorld().playSound(loc, Sound.ENTITY_WITHER_DEATH, 1f, 0.5f);
+        
+        ItemStack graveItem = new ItemStack(Material.GRAY_CONCRETE);
+         ItemMeta meta = graveItem.getItemMeta();
+          if (meta != null) {
+           meta.setCustomModelData(500);
+          graveItem.setItemMeta(meta);
+     } 
+               
         ArmorStand grave = loc.getWorld().spawn(loc.clone().add(0, -0.5, 0), ArmorStand.class, as -> {
             as.setVisible(false);
             as.setGravity(false);
             as.setCustomName("§7§lRIP §f" + victim.getName());
             as.setCustomNameVisible(true);
             as.setSmall(true);
-            as.getEquipment().setHelmet(new ItemStack(Material.GRAY_CONCRETE));
+            as.getEquipment().setHelmet(graveItem);
         });
         new BukkitRunnable() {
             int ticks = 0;
