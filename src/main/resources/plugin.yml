@@ -3,15 +3,25 @@ version: 1.0
 main: com.phantom.swords.PhanTomCore
 api-version: 1.21
 author: NotEasyOk
-description: Legendary swords with custom rituals.
+description: Legendary swords and Life System with custom rituals.
 
 commands:
   phantomswords:
     description: Administration command.
     aliases: [ps]
     permission: phantomswords.admin
+  revive:
+    description: Revive an eliminated player using a Revival Book.
+    usage: /revive <player>
+  withdraw:
+    description: Withdraw one heart as a physical item.
+    usage: /withdraw
+  sethearts:
+    description: Set a player's maximum hearts.
+    permission: phantomswords.admin
+    usage: /sethearts <player> <amount>
 
 permissions:
   phantomswords.admin:
-    description: Access to admin commands.
+    description: Access to admin commands and setting hearts.
     default: op
