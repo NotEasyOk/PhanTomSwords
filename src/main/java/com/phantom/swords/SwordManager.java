@@ -61,7 +61,7 @@ public class SwordManager implements Listener {
         List<String> lore = new ArrayList<>();
         lore.add("§8§m----------------------------------");
         
-        } else if (type.equals("PHANTOM_BLADE")) {
+         if (type.equals("PHANTOM_BLADE")) {
             meta.setCustomModelData(1);
             lore.add("§7Weapon Class: §5§lMYTHIC CURSE");
             lore.add("§8Forged in the depths of the void.");
