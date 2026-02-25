@@ -82,6 +82,23 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
         }
     }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        if (!plugin.getConfig().getBoolean("life-system.enabled", true)) return;
+        Player p = e.getPlayer();
+        
+        // Agar player revive list mein hai
+        if (plugin.getDataManager().isRevived(p.getUniqueId())) {
+            double reviveHealth = 6.0; // 3 Hearts
+            p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(reviveHealth);
+            p.setHealth(reviveHealth);
+            
+            // Data se remove karo taaki baar baar reset na ho
+            plugin.getDataManager().removeRevivedPlayer(p.getUniqueId());
+            p.sendMessage("§d§lYou have been brought back to life!");
+        }
+    }
+
     private void handleHeartTransfer(Player killer, Player victim) {
         double vMax = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         double kMax = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
