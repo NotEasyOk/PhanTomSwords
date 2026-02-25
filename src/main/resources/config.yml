@@ -1,15 +1,10 @@
-crafted_swords: {}
+# ==========================================
+# PHANTOM CORE - OFFICIAL CONFIGURATION
+# ==========================================
 
 swords:
   PHANTOM_BLADE:
-    name: "&4&lPhanTom Blade"
-    material: "NETHERITE_SWORD"
-    custom_model_data: 1001
-    lore:
-      - "&7Type: &cCurse Power"
-      - "&f» &eL: &7Rapid Slash"
-      - "&f» &eR: &7Curse Dash"
-      - "&f» &eS: &7Domain Slash"
+    ritual_time_minutes: 15
     cooldowns:
       left: 10
       right: 15
@@ -26,14 +21,7 @@ swords:
       - "NETHER_STAR"
 
   SHADOW_BLADE:
-    name: "&8&lShadow Blade"
-    material: "NETHERITE_SWORD"
-    custom_model_data: 1002
-    lore:
-      - "&7Type: &8Soul Power"
-      - "&f» &eL: &7Soul Slash"
-      - "&f» &eR: &7Shadow Step"
-      - "&f» &eS: &7Hollow Mode"
+    ritual_time_minutes: 10
     cooldowns:
       left: 8
       right: 12
@@ -50,14 +38,7 @@ swords:
       - "DIAMOND"
 
   FIRE_LIGHTER:
-    name: "&6&lFire Lighter"
-    material: "NETHERITE_SWORD"
-    custom_model_data: 1003
-    lore:
-      - "&7Type: &6Elemental"
-      - "&f» &eL: &7Thunder Strike"
-      - "&f» &eR: &7Fire Dash"
-      - "&f» &eS: &7Flame Burst"
+    ritual_time_minutes: 5
     cooldowns:
       left: 5
       right: 10
@@ -72,3 +53,6 @@ swords:
       - "LAVA_BUCKET"
       - "NETHERITE_INGOT"
       - "LAVA_BUCKET"
+
+# Persistence Data
+Crafted_swords: {}
