@@ -70,7 +70,7 @@ public class RitualManager implements Listener {
                 // Sword se nikalta hua upar ki taraf jata mota pillar
                 for (double y = 0; y < 6; y += 0.3) {
                     center.getWorld().spawnParticle(Particle.DRAGON_BREATH, center.clone().add(0, y, 0), 3, 0.15, 0.1, 0.15, 0.02);
-                    center.getWorld().spawnParticle(Particle.SPELL_WITCH, center.clone().add(0, y, 0), 5, 0.2, 0.1, 0.2, 0.05);
+                    center.getWorld().spawnParticle(Particle.WITCH, center.clone().add(0, y, 0), 5, 0.2, 0.1, 0.2, 0.05);
                 }
 
                 // 2. BLACK GALAXY ORBIT (Spiral to Sky)
