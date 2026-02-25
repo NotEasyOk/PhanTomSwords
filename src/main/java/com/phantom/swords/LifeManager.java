@@ -1,4 +1,4 @@
-,package com.phantom.swords;
+package com.phantom.swords;
 
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
