@@ -38,6 +38,7 @@ public class SwordManager implements Listener {
                     if (type != null) {
                         applyGodAttributes(item, type);
                         sendFancyActionBar(p, type);
+                        applyPassiveEffects(p, type);
                     }
                 }
             }
