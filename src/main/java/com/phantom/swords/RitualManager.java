@@ -36,12 +36,6 @@ public class RitualManager implements Listener {
         
         startLimitlessRitual(p, craftLoc, result);
     }
-        Location craftLoc = p.getLocation().clone(); 
-        event.setCancelled(true);
-        event.getInventory().setMatrix(new ItemStack[9]); 
-        
-        startLimitlessRitual(p, craftLoc, result);
-    }
 
     public void startLimitlessRitual(Player p, Location loc, ItemStack sword) {
         String displayName = sword.getItemMeta().getDisplayName();
@@ -130,4 +124,4 @@ public class RitualManager implements Listener {
         bar.removeAll();
         as.remove();
     }
-                                                }
+}
