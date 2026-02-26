@@ -235,7 +235,7 @@ public class SwordManager implements Listener {
                     p.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, beam, 5, 0.1, 0.1, 0.1, 0.02);
                 }
                 p.playSound(loc, Sound.ENTITY_WITHER_SHOOT, 0.5f, 1.5f);
-                damageNearbyLoc(p, getAimTargetLoc(p, 15), 3.0, 12.0);
+                damageNearbyLoc(p, getAimTargetLoc(p, 15), 3.0, 24.0);
                 break;
                 
             case "ULT":
