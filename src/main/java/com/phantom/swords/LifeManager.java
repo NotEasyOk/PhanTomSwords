@@ -79,13 +79,13 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
         if (!item.hasItemMeta() || !item.getItemMeta().getDisplayName().contains("Physical Heart")) return;
         if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             e.setCancelled(true);
-            double max = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            double max = p.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getBaseValue();
             if (max >= 40.0) {
                 p.sendMessage("§cYou already have maximum hearts!");
                 return;
             }
             item.setAmount(item.getAmount() - 1);
-            p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(max + 2.0);
+            p.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).setBaseValue(max + 2.0);
             p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
             p.sendMessage("§a§l+1 Heart Consumed!");
         }
@@ -99,7 +99,7 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
         // Agar player revive list mein hai
         if (plugin.getDataManager().isRevived(p.getUniqueId())) {
             double reviveHealth = 6.0; // 3 Hearts
-            p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(reviveHealth);
+            p.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).setBaseValue(reviveHealth);
             p.setHealth(reviveHealth);
             
             // Data se remove karo taaki baar baar reset na ho
@@ -109,17 +109,17 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
     }
 
     private void handleHeartTransfer(Player killer, Player victim) {
-        double vMax = victim.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
-        double kMax = killer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+        double vMax = victim.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getBaseValue();
+        double kMax = killer.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getBaseValue();
         double newVMax = vMax - 2.0;
         if (newVMax <= 0) {
             eliminate(victim);
         } else {
-            victim.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(newVMax);
+            victim.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).setBaseValue(newVMax);
             victim.sendMessage("§c§l-1 Heart Taken...");
         }
         if (kMax < 40.0) {
-            killer.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(kMax + 2.0);
+            killer.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).setBaseValue(kMax + 2.0);
             killer.setHealth(Math.min(killer.getHealth() + 2.0, kMax + 2.0));
             killer.sendTitle("§4§l+1 LIFE TAKEN", "§7Your power grows...", 10, 40, 10);
             killer.playSound(killer.getLocation(), Sound.ENTITY_WITHER_SPAWN, 1f, 1.5f);
@@ -147,12 +147,12 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
         Player p = (Player) sender;
 
         if (label.equalsIgnoreCase("withdraw")) {
-            double currentMax = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            double currentMax = p.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getBaseValue();
             if (currentMax <= 4.0) {
                 p.sendMessage("§cYou cannot withdraw your last heart!");
                 return true;
             }
-            p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(currentMax - 2.0);
+            p.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).setBaseValue(currentMax - 2.0);
             p.getInventory().addItem(getHeartItem());
             p.sendMessage("§a§l-1 Heart §7(Item added to inventory)");
             return true;
