@@ -1,7 +1,6 @@
 package com.phantom.swords;
 
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
