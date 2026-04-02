@@ -35,8 +35,6 @@ public class LifeManager implements Listener, CommandExecutor, TabCompleter {
 
     private void playDeathAnimation(Player victim) {
         Location loc = victim.getLocation();
-        loc.getWorld().playSound(loc, Sound.ENTITY_GHAST_SCREAM, 1.5f, 0.5f);
-        loc.getWorld().playSound(loc, Sound.ENTITY_WITHER_DEATH, 1f, 0.5f);
         
         ItemStack graveItem = new ItemStack(Material.GRAY_CONCRETE);
          ItemMeta meta = graveItem.getItemMeta();
